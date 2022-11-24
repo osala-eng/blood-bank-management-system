@@ -14,6 +14,11 @@ describe('Test app.ts', () => {
       });
   });
 
+  test('Get unknown route to return 404', async () => {
+    const res = await request(app).get('/no-route');
+    expect(res.statusCode).toBe(404);
+  })
+
   test('Get by id is correct expect 200', async () => {
     const res = await request(app).get('/get-blood/id/1');
     expect(res.statusCode).toBe(200);

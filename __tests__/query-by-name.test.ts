@@ -1,22 +1,28 @@
 import request from 'supertest';
 import {BloodRecords} from '../src/types/types';
 import app from '../src/app';
+import {createServer, Server} from 'http';
+
+
+let server: Server;
+beforeAll(async () => {
+    server  = createServer(app);
+})
+afterAll(async ()=>{
+    server.unref()
+});
 
 describe('Test get query by name', () => {
   test('Get by id is correct expect 200', async () => {
-    request(app)
-        .get('/get-blood/hospital/Royal Infirmary')
-        .expect('Content-Type', /application\/json; charset=utf-8/)
-        .expect(200)
-        .end((err, res) => {
-            if(err) return err;
-            const rows = JSON.parse(res.body);
-            expect(rows.length > 1).toBe(true);
-        });
-  });
+    const test = await request(server)
+    .get('/get-blood/hospital/Royal Infirmary')
+    expect(test.statusCode).toBe(200)
+    const rows = test.body as BloodRecords;
+    expect(rows.length > 1).toBe(true);
+    });
 
   test('Get by name error expect 400', async () => {
-    const res = await request(app).get('/get-blood/hospital/not');
+    const res = await request(server).get('/get-blood/hospital/not');
     expect(res.statusCode).toBe(400);
     expect(res.text).toEqual('Error');
   });
