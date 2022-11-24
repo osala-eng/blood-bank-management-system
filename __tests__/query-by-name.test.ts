@@ -10,7 +10,7 @@ describe('Test get query by name', () => {
         .expect(200)
         .end((err, res) => {
             if(err) return err;
-            const rows = JSON.parse(res.body) as BloodRecords;
+            const rows = JSON.parse(res.body);
             expect(rows.length > 1).toBe(true);
         });
   });
