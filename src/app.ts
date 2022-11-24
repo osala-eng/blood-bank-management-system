@@ -18,11 +18,11 @@ app.get('/', (_, res) => {
 app.get('/get-blood/id/:id', async (req, res) => {
   const id = req.params.id;
   pool.query(`${queryById}${id}`, (err, data) => {
-    if(err){
+    if(err || !data.rowCount){
       res.status(HTTP['400']).send('Error');
     }
     else {
-      res.status(HTTP['200']).json(data.rows);
+      res.status(HTTP['200']).json(data.rows[0]);
     }
   });
 });
