@@ -1,11 +1,9 @@
 import express from 'express';
 import { pool } from './database';
-import {queryById} from './config/config';
 import { HTTP } from './types/types';
 
 const app = express();
 app.use(express.json());
-// Connect();
 
 
 app.get('/', (_, res) => {
@@ -16,8 +14,9 @@ app.get('/', (_, res) => {
  * Get by id
  */
 app.get('/get-blood/id/:id', async (req, res) => {
-  const id = req.params.id;
-  pool.query(`${queryById}${id}`, (err, data) => {
+  const {id} = req.params;
+  const sql = 'select * from bloodbankmanagementsystem_sql_user_jashon where id = $1';
+  pool.query(sql, [id], (err, data) => {
     if(err || !data.rowCount){
       res.status(HTTP['400']).send('Error');
     }

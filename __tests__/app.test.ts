@@ -3,10 +3,15 @@ import request from 'supertest';
 import app from '../src/app';
 
 describe('Test app.ts', () => {
-  test('Get response is correct', async () => {
-    const res = await request(app).get('/');
-    expect(res.statusCode).toEqual(200);
-    expect(res.text).toEqual('Welcome to SkillReactor');
+  it('Get response at root is correct', async () => {
+    request(app)
+      .get('/')
+      .expect('Content-Type', /text\/html; charset=utf-8/)
+      .expect(200)
+      .end((err, res) => {
+        if(err) return err
+        expect(res.text).toEqual('Welcome to SkillReactor')
+      });
   });
 
   test('Get by id is correct expect 200', async () => {
