@@ -26,4 +26,20 @@ app.get('/get-blood/id/:id', async (req, res) => {
   });
 });
 
+/**
+ * Get by hospital name
+ */
+ app.get('/get-blood/hospital/:hospital?', async (req, res) => {
+  const hospital = req.params.hospital;
+  const sql = 'select * from bloodbankmanagementsystem_sql_user_jashon where hospital = $1';
+  pool.query(sql, [hospital], (err, data) => {
+    if(err || !data.rowCount){
+      res.status(HTTP['400']).send('Error');
+    }
+    else {
+      res.status(HTTP['200']).json(data.rows);
+    }
+  });
+});
+
 export default app;
