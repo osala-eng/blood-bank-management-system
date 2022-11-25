@@ -7,7 +7,8 @@ import cors from 'cors';
 const app = express();
 app.use(express.json());
 
-const corsOpt: cors.CorsOptions = {origin: '*', methods: '*'};
+const corsOpt: cors.CorsOptions = {origin: '*',
+  methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH']};
 
 app.get('/', (_, res) => {
   res.status(HTTP['200']).send('Welcome to SkillReactor');
@@ -45,7 +46,11 @@ app.get('/get-blood/id/:id', async (req, res) => {
   });
 });
 
-app.post('/update-blood', cors(corsOpt), async (req, res) => {
+app.post('/update-blood', async (req, res) => {
+  res.header({
+    'Access-Control-Allow-Origin' : '*',
+    'Access-Control-Allow-Methods' : '*'});
+
   try{
     const updateData = req.body as UpdateSql;
     if(updateData.id === undefined){

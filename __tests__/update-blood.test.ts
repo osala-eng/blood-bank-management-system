@@ -37,9 +37,8 @@ describe('post to /update-blood', () => {
         .send(multiReq)
         .expect(201)
         .expect('Access-Control-Allow-Origin', /\*/)
-        .end((err, res) => {
+        .end((err, _res) => {
             if(err) return done(err);
-            console.log(res)
             return done();
         });
     });
@@ -62,6 +61,7 @@ describe('post to /update-blood', () => {
         .send({id: 100, donator: 'Jane Doe'})
         .expect(400)
         .expect('Access-Control-Allow-Origin', /\*/)
+        .expect('Access-Control-Allow-Methods', /\*/)
         .end((err, _) => {
             if(err) return done(err);
             return done();
