@@ -1,4 +1,4 @@
-import express, {Response} from 'express';
+import express, {Response, Request} from 'express';
 import { pool } from './database';
 import { SqlAccess } from './dataTools/sqlAccess';
 import { HTTP, UpdateSql } from './types/types';
@@ -6,7 +6,11 @@ import cors from 'cors';
 
 const app = express();
 app.use(express.json());
-app.use(cors({methods: '*', origin: '*'}));
+app.use((_req: Request, res: Response, next) =>{
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', '*');
+    next();
+});
 
 app.get('/', (_, res) => {
   res.status(HTTP['200']).send('Welcome to SkillReactor');
