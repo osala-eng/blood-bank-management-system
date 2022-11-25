@@ -2,14 +2,14 @@ import express, {Response, Request} from 'express';
 import { pool } from './database';
 import { SqlAccess } from './dataTools/sqlAccess';
 import { HTTP, UpdateSql } from './types/types';
-import cors from 'cors';
 
 const app = express();
 app.use(express.json());
 app.use((_req: Request, res: Response, next) =>{
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', '*');
-    next();
+    res.header({
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': '*' });
+      next();
 });
 
 app.get('/', (_, res) => {
@@ -61,15 +61,10 @@ app.post('/update-blood', async (req, res) => {
     }
 
     dbInstance.updateQuery();
-    res.setHeader('Access-Control-Allow-Origin' , '*')
-    res.setHeader('Access-Control-Allow-Methods' , '*')
     res.status(HTTP['201']).send();
   }
   catch(e){
-    res.setHeader('Access-Control-Allow-Origin' , '*')
-    res.setHeader('Access-Control-Allow-Methods' , '*')
     res.status(HTTP['400']).json(e.message);
-  }
-
+  };
 });
 export default app;

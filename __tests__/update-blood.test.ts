@@ -68,4 +68,15 @@ describe('post to /update-blood', () => {
         });
     });
 
+    test('Test cors options', (done)=>{
+        request(server)
+        .get('/')
+        .expect('Access-Control-Allow-Origin', /\*/)
+        .expect('Access-Control-Allow-Methods', /\*/)
+        .end((err, _) => {
+            if (err) return done(err);
+            done();
+        });
+    });
+
 });

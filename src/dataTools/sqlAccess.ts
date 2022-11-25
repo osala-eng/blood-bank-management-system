@@ -6,7 +6,7 @@ import { pool } from '../database';
  */
 export class SqlStringer{
     sql :string;
-    private keys;
+    private readonly keys: string[];
 
     /**
      * Constructor
@@ -17,13 +17,13 @@ export class SqlStringer{
         this.keys = Object.keys(data);
         this.sql = 'update bloodbankmanagementsystem_sql_user_jashon set ';
         const index = (this.keys.indexOf('id'));
-        index !== -1 && delete(this.keys[index]);
+        index !== -1 && this.keys.splice(0,1);
         this.keys.forEach((key, i) => {
             if (i === this.keys.length - 1){
-                this.sql += `${key} = $${i + 1} `;
+                this.sql += `${key} = $${i + 2} `;
             }
             else {
-                this.sql += `${key} = $${i + 1}, `;
+                this.sql += `${key} = $${i + 2}, `;
             }
         });
         this.sql += 'where id = $1';
@@ -34,7 +34,7 @@ export class SqlStringer{
  * Class to abstract database access from the server
  */
 export class SqlAccess extends SqlStringer{
-    private dataValues: Array<string | number > = [];
+    private readonly dataValues: Array<string | number > = [];
 
     /**
      * constructor for class to abstract db access
