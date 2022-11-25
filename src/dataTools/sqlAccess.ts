@@ -18,12 +18,13 @@ export class SqlStringer{
         this.sql = 'update bloodbankmanagementsystem_sql_user_jashon set ';
         const index = (this.keys.indexOf('id'));
         index !== -1 && this.keys.splice(0,1);
+        const lim = 2;
         this.keys.forEach((key, i) => {
             if (i === this.keys.length - 1){
-                this.sql += `${key} = $${i + 2} `;
+                this.sql += `${key} = $${i + lim} `;
             }
             else {
-                this.sql += `${key} = $${i + 2}, `;
+                this.sql += `${key} = $${i + lim}, `;
             }
         });
         this.sql += 'where id = $1';
