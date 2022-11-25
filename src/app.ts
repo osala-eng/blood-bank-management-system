@@ -1,10 +1,13 @@
 import express from 'express';
 import { pool } from './database';
-import { HTTP } from './types/types';
+import { SqlAccess } from './dataTools/sqlAccess';
+import { HTTP, UpdateSql } from './types/types';
+import cors from 'cors';
 
 const app = express();
 app.use(express.json());
 
+const corsOpt: cors.CorsOptions = {origin: '*', methods: '*'};
 
 app.get('/', (_, res) => {
   res.status(HTTP['200']).send('Welcome to SkillReactor');
@@ -42,4 +45,24 @@ app.get('/get-blood/id/:id', async (req, res) => {
   });
 });
 
+app.post('/update-blood', cors(corsOpt), async (req, res) => {
+  try{
+    const updateData = req.body as UpdateSql;
+    if(updateData.id === undefined){
+      throw new Error('id must be provided');
+    }
+    const dbInstance = new SqlAccess(updateData);
+
+    if(!(await dbInstance.recordExist(updateData.id))){
+      throw new Error('Record not found');
+    }
+
+    dbInstance.updateQuery();
+    res.status(HTTP['201']).send();
+  }
+  catch(e){
+    res.status(HTTP['400']).json(e.message);
+  }
+
+});
 export default app;

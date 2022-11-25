@@ -14,3 +14,15 @@ export interface BloodRecord {
 };
 
 export type BloodRecords = BloodRecord[];
+
+export interface UpdateSql {
+    id: number;
+    hospital?: string;
+    date?: string;
+    blood_type?: string;
+    expiry?: string;
+    location?: string;
+    donator?: string;
+};
+
+export const NULL = 0;
