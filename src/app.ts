@@ -2,13 +2,9 @@ import express from 'express';
 import { pool } from './database';
 import { SqlAccess } from './dataTools/sqlAccess';
 import { HTTP, UpdateSql } from './types/types';
-import cors from 'cors';
 
 const app = express();
 app.use(express.json());
-
-const corsOpt: cors.CorsOptions = {origin: '*',
-  methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH']};
 
 app.get('/', (_, res) => {
   res.status(HTTP['200']).send('Welcome to SkillReactor');
@@ -47,10 +43,6 @@ app.get('/get-blood/id/:id', async (req, res) => {
 });
 
 app.post('/update-blood', async (req, res) => {
-  res.header({
-    'Access-Control-Allow-Origin' : '*',
-    'Access-Control-Allow-Methods' : '*'});
-
   try{
     const updateData = req.body as UpdateSql;
     if(updateData.id === undefined){
@@ -63,9 +55,14 @@ app.post('/update-blood', async (req, res) => {
     }
 
     dbInstance.updateQuery();
+    res.header({
+      'Access-Control-Allow-Origin' : '*',
+      'Access-Control-Allow-Methods' : '*'});
     res.status(HTTP['201']).send();
   }
   catch(e){
+    res.setHeader('Access-Control-Allow-Origin' , '*')
+    res.setHeader('Access-Control-Allow-Methods' , '*')
     res.status(HTTP['400']).json(e.message);
   }
 
