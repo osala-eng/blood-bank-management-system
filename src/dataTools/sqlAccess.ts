@@ -6,14 +6,18 @@ import { pool } from '../database';
  */
 export class SqlStringer{
     sql :string;
-    private readonly keys: string[];
+    private keys: string[];
 
     /**
      * Constructor
-     * @param data Object of type interface UpdateSql
      */
-    constructor(
-        private readonly data: UpdateSql){
+    constructor(){};
+
+    /**
+     * Creates a query update string for postgres sql
+     * @param data query data object
+     */
+    getUpdateString(data: UpdateSql){
         this.keys = Object.keys(data);
         this.sql = 'update bloodbankmanagementsystem_sql_user_jashon set ';
         const index = (this.keys.indexOf('id'));
@@ -28,7 +32,7 @@ export class SqlStringer{
             }
         });
         this.sql += 'where id = $1';
-    };
+    }
 };
 
 /**
@@ -41,18 +45,18 @@ export class SqlAccess extends SqlStringer{
      * constructor for class to abstract db access
      * @param updateData Object of type interface UpdateSql
      */
-    constructor(
-        private readonly updateData: UpdateSql ){
-        super(updateData);
-        Object.values(updateData).forEach(ele => {
-            this.dataValues.push(ele);
-        });
+    constructor( private readonly updateData?: UpdateSql ){
+        super();
     };
 
     /**
      * Method to run sql update query operation
      */
     async updateQuery (){
+        this.getUpdateString(this.updateData)
+        Object.values(this.updateData).forEach(ele => {
+            this.dataValues.push(ele);
+        });
         await pool.query(this.sql, this.dataValues);
     };
 
@@ -66,5 +70,15 @@ export class SqlAccess extends SqlStringer{
             `select * from bloodbankmanagementsystem_sql_user_jashon where id = $1`;
         const res = await pool.query(sql, [id]);
         return res.rowCount > NULL;
+    };
+
+    async deleteRecord(id: number) {
+        const proced = await this.recordExist(id);
+        if(!proced){
+            throw new Error (`Record with ${id} does not exist`);
+        }
+        const sql =
+            `delete from bloodbankmanagementsystem_sql_user_jashon where id = $1`;
+        await pool.query(sql, [id]);
     };
 };

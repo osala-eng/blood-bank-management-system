@@ -1,7 +1,10 @@
 export const HTTP = {
     '200' : 200,
     '201' : 201,
-    '400' : 400 };
+    '400' : 400,
+    '202' : 202,
+    '203' : 203,
+    '204' : 204 };
 
 export interface BloodRecord {
     id: number;

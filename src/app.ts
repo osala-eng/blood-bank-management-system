@@ -48,6 +48,9 @@ app.get('/get-blood/id/:id', async (req, res) => {
   });
 });
 
+/**
+ * Update blood record
+ */
 app.post('/update-blood', async (req, res) => {
   try{
     const updateData = req.body as UpdateSql;
@@ -60,11 +63,30 @@ app.post('/update-blood', async (req, res) => {
       throw new Error('Record not found');
     }
 
-    dbInstance.updateQuery();
+    await dbInstance.updateQuery();
     res.status(HTTP['201']).send();
   }
   catch(e){
     res.status(HTTP['400']).json(e.message);
   };
 });
+
+/**
+ * Delete blood record
+ */
+app.post('/delete-blood', async(req, res) => {
+  try{
+    const {id} = req.body as {id: number};
+    if(id === undefined){
+      throw new Error('id must be provided');
+    }
+    const dbInstance = new SqlAccess();
+    await dbInstance.deleteRecord(id);
+    res.status(HTTP['200']).send();
+  }
+  catch(e){
+    res.status(HTTP['400']).send(e.message);
+  }
+});
+
 export default app;
