@@ -3,14 +3,15 @@ import request from 'supertest';
 import app from '../src/app';
 
 describe('Test app.ts', () => {
-  it('Get response at root is correct', async () => {
+  test('Get response at root is correct', (done) => {
     request(app)
       .get('/')
       .expect('Content-Type', /text\/html; charset=utf-8/)
       .expect(200)
       .end((err, res) => {
-        if(err) return err
+        if(err) return done(err)
         expect(res.text).toEqual('Welcome to SkillReactor')
+        done();
       });
   });
 

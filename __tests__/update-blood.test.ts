@@ -7,7 +7,7 @@ import {createServer, Server} from 'http';
 let server: Server;
 beforeAll( () => {
     server  = createServer(app);
-})
+});
 afterAll( ()=>{
     server.close()
 });
@@ -70,7 +70,8 @@ describe('post to /update-blood', () => {
 
     test('Test cors options', (done)=>{
         request(server)
-        .get('/')
+        .post('/update-blood')
+        .send({})
         .expect('Access-Control-Allow-Origin', /\*/)
         .expect('Access-Control-Allow-Methods', /\*/)
         .end((err, _) => {
