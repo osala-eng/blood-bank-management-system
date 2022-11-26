@@ -1,4 +1,4 @@
-import { NULL, UpdateSql } from '../types/types';
+import { InsertSql, NULL, UpdateSql } from '../types/types';
 import { pool } from '../database';
 
 /**
@@ -7,11 +7,6 @@ import { pool } from '../database';
 export class SqlStringer{
     sql :string;
     private keys: string[];
-
-    /**
-     * Constructor
-     */
-    constructor(){};
 
     /**
      * Creates a query update string for postgres sql
@@ -53,7 +48,7 @@ export class SqlAccess extends SqlStringer{
      * Method to run sql update query operation
      */
     async updateQuery (){
-        this.getUpdateString(this.updateData)
+        this.getUpdateString(this.updateData);
         Object.values(this.updateData).forEach(ele => {
             this.dataValues.push(ele);
         });
@@ -81,4 +76,17 @@ export class SqlAccess extends SqlStringer{
             `delete from bloodbankmanagementsystem_sql_user_jashon where id = $1`;
         await pool.query(sql, [id]);
     };
+
+    insertRecord = async (data: InsertSql) => {
+        const recs: Array<string| Date | number> = [data.id];
+        recs.push(data.hospital, data.blood_type, data.location, data.donator);
+        const sql =
+            `insert into bloodbankmanagementsystem_sql_user_jashon
+            (id, hospital, blood_type, location, donator, date, expiry)
+            values ($1, $2, $3, $4, $5, $6, $7)`;
+        const [date , expiry, month] = [new Date(), new Date(), 6];
+        expiry.setMonth(expiry.getMonth() + month);
+        recs.push(date, expiry);
+        await pool.query(sql, recs);
+    }
 };

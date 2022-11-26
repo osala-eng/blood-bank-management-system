@@ -28,4 +28,12 @@ export interface UpdateSql {
     donator?: string;
 };
 
+export interface InsertSql {
+    id: number;
+    hospital: string;
+    blood_type: string;
+    location: string;
+    donator: string;
+}
+
 export const NULL = 0;

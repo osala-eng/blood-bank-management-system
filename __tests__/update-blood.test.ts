@@ -5,11 +5,11 @@ import {createServer, Server} from 'http';
 
 
 let server: Server;
-beforeAll(async () => {
+beforeAll( () => {
     server  = createServer(app);
 })
-afterAll(async ()=>{
-    server.unref()
+afterAll( ()=>{
+    server.close()
 });
 const singleReq: UpdateSql = {
     id: 5,

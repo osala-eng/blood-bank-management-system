@@ -1,7 +1,7 @@
 import express, {Response, Request} from 'express';
 import { pool } from './database';
 import { SqlAccess } from './dataTools/sqlAccess';
-import { HTTP, UpdateSql } from './types/types';
+import { HTTP, InsertSql, UpdateSql } from './types/types';
 
 const app = express();
 app.use(express.json());
@@ -12,6 +12,9 @@ app.use((_req: Request, res: Response, next) =>{
       next();
 });
 
+/**
+ * Root
+ */
 app.get('/', (_, res) => {
   res.status(HTTP['200']).send('Welcome to SkillReactor');
 });
@@ -86,6 +89,24 @@ app.post('/delete-blood', async(req, res) => {
   }
   catch(e){
     res.status(HTTP['400']).send(e.message);
+  }
+});
+
+/**
+ * Insert blood record
+ */
+app.post('/insert-blood', async (req, res) => {
+  try{
+    const recs: InsertSql = req.body;
+    if (!recs.id){
+      throw new Error('id cannot be null');
+    }
+    const dbInstance = new SqlAccess();
+    await dbInstance.insertRecord(recs);
+    res.status(200).send('Success');
+  }
+  catch(e){
+    res.status(400).send(e.message);
   }
 });
 
