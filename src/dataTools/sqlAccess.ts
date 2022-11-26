@@ -117,4 +117,10 @@ export class SqlAccess extends SqlStringer{
         where blood_type = $1`;
         return (await pool.query(sql, [type])).rows as BloodRecords;
     };
+
+    async deleteExpired(expiry: Date): Promise<void> {
+        const sql =
+            `delete from bloodbankmanagementsystem_sql_user_jashon where expiry >= $1`;
+        await pool.query(sql, [expiry]);
+    };
 };
