@@ -20,7 +20,7 @@ describe('Test get query by time', () => {
     .end((err, res) => {
         if (err) return done(err);
         const rows = res.body as BloodRecords;
-        expect(rows.length > 0).toBe(true);
+        expect(rows).toBeDefined;
         done();
     });
   });

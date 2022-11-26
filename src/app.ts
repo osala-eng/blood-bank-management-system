@@ -138,8 +138,9 @@ app.get('/get-blood/type/:type', async(req, res)=>{
 app.post('/clean-blood', async (req, res) => {
     try{
       const {expiry} = req.body as {expiry: string};
+      const expiryDate = new Date(expiry)
       const dbInstance = new SqlAccess();
-      await dbInstance.deleteExpired(expiry);
+      await dbInstance.deleteExpired(expiryDate);
       res.status(HTTP['200']).send('Success');
     }
     catch(e){

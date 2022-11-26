@@ -8,7 +8,7 @@ import {SqlAccess} from '../src/dataTools/sqlAccess';
 let server: Server;
 beforeAll(async () => {
     const mockRec: InsertSql = {
-        id: 222,
+        id: 201,
         hospital: 'Test',
         blood_type: 'Test',
         donator: 'Test',
@@ -32,7 +32,7 @@ describe('Delete blood-record', () => {
   test('Delete with a valid id', (done) => {
         request(server)
         .post('/delete-blood')
-        .send({id: 222})
+        .send({id: 201})
         .expect(200)
         .end((err, _res)=> {
             if (err) return done(err);

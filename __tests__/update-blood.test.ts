@@ -1,18 +1,39 @@
 import request from 'supertest';
-import {UpdateSql} from '../src/types/types';
+import {UpdateSql, InsertSql} from '../src/types/types';
 import app from '../src/app';
 import {createServer, Server} from 'http';
+import {SqlAccess} from '../src/dataTools/sqlAccess';
 
 
 let server: Server;
-beforeAll( () => {
-    server  = createServer(app);
-});
-afterAll( ()=>{
-    server.close()
-});
+beforeAll( async() => {
+    const mockRec: InsertSql = {
+      id: 206,
+      hospital: 'Test',
+      blood_type: 'Test',
+      donator: 'Test',
+      location: 'Test' };
+  try {
+      const dbInstance = new SqlAccess();
+      await dbInstance.insertRecord(mockRec);
+  }
+  catch (e){
+      console.log(e.message);
+  }
+      server  = createServer(app);
+  })
+  afterAll( async()=>{
+      server.close();
+      try {
+        const dbInstance = new SqlAccess();
+        await dbInstance.deleteRecord(206);
+    }
+    catch (e){
+        console.log(e.message);
+    }
+  });
 const singleReq: UpdateSql = {
-    id: 5,
+    id: 206,
     donator: 'Jane Smith'
 };
 

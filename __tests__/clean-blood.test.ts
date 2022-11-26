@@ -3,7 +3,7 @@ import {BloodRecords} from '../src/types/types';
 import app from '../src/app';
 import {createServer, Server} from 'http';
 
-
+jest.setTimeout(20000);
 let server: Server;
 beforeAll(() => {
     server  = createServer(app);
@@ -11,12 +11,11 @@ beforeAll(() => {
 afterAll(()=>{
     server.close();
 });
-
 describe('Test clean blood endpoint', () => {
   test('Expect success for correct time format', (done) => {
     request(server)
     .post('/clean-blood')
-    .send({expiry: '3031-12-28T12:14:19'})
+    .send({expiry: '1999-12-28T12:14:19'})
     .expect(200)
     .end((err, res) => {
         if (err) return done(err);
