@@ -84,9 +84,10 @@ export class SqlAccess extends SqlStringer{
             `insert into bloodbankmanagementsystem_sql_user_jashon
             (id, hospital, blood_type, location, donator, date, expiry)
             values ($1, $2, $3, $4, $5, $6, $7)`;
-        const [date , expiry, month] = [new Date(), new Date(), 6];
+        const month = 6;
+        const [date , expiry] = [new Date(), new Date()];
         expiry.setMonth(expiry.getMonth() + month);
         recs.push(date, expiry);
         await pool.query(sql, recs);
-    }
+    };
 };
