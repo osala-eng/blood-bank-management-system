@@ -1,4 +1,4 @@
-import { InsertSql, NULL, UpdateSql } from '../types/types';
+import { BloodRecords, InsertSql, NULL, UpdateSql } from '../types/types';
 import { pool } from '../database';
 
 /**
@@ -47,7 +47,7 @@ export class SqlAccess extends SqlStringer{
     /**
      * Method to run sql update query operation
      */
-    async updateQuery (){
+    async updateQuery (): Promise<void>{
         this.getUpdateString(this.updateData);
         Object.values(this.updateData).forEach(ele => {
             this.dataValues.push(ele);
@@ -67,7 +67,11 @@ export class SqlAccess extends SqlStringer{
         return res.rowCount > NULL;
     };
 
-    async deleteRecord(id: number) {
+    /**
+     * Delete record from the table give id
+     * @param id number
+     */
+    async deleteRecord(id: number): Promise<void> {
         const proced = await this.recordExist(id);
         if(!proced){
             throw new Error (`Record with ${id} does not exist`);
@@ -77,7 +81,11 @@ export class SqlAccess extends SqlStringer{
         await pool.query(sql, [id]);
     };
 
-    insertRecord = async (data: InsertSql) => {
+    /**
+     * Insert record into the table
+     * @param data table data format
+     */
+    insertRecord = async (data: InsertSql): Promise<void> => {
         const recs: Array<string| Date | number> = [data.id];
         recs.push(data.hospital, data.blood_type, data.location, data.donator);
         const sql =
@@ -89,5 +97,24 @@ export class SqlAccess extends SqlStringer{
         expiry.setMonth(expiry.getMonth() + month);
         recs.push(date, expiry);
         await pool.query(sql, recs);
+    };
+
+    /**
+     * Query records filtered by time
+     * @param time time format
+     * @returns promise Blood records
+     */
+    querybyTime = async (time: Date): Promise<BloodRecords> => {
+        const sql = `
+            select * from bloodbankmanagementsystem_sql_user_jashon
+            where date >= $1`;
+        return (await pool.query(sql, [time])).rows as BloodRecords;
+    };
+
+    querybyBloodType = async (type: string): Promise<BloodRecords> => {
+        const sql =`
+        select * from bloodbankmanagementsystem_sql_user_jashon
+        where blood_type = $1`;
+        return (await pool.query(sql, [type])).rows as BloodRecords;
     };
 };

@@ -1,7 +1,7 @@
 import express, {Response, Request} from 'express';
 import { pool } from './database';
 import { SqlAccess } from './dataTools/sqlAccess';
-import { HTTP, InsertSql, UpdateSql } from './types/types';
+import { HTTP, UpdateSql } from './types/types';
 
 const app = express();
 app.use(express.json());
@@ -92,4 +92,43 @@ app.post('/delete-blood', async(req, res) => {
   }
 });
 
+/**
+ * Query by time
+ */
+app.get('/get-blood/time/:time', async(req, res) => {
+  try {
+    const {time} = req.params;
+    if (!time) {
+      throw new Error('time is required');
+    }
+    const timefmt = new Date(time);
+    const dbInstance = new SqlAccess();
+    const rows = await dbInstance.querybyTime(timefmt);
+    res.status(HTTP['200']).json(rows);
+  }
+  catch(e){
+    res.status(HTTP['400']).send(e.message);
+  }
+});
+
+/**
+ * Query blood type
+ */
+app.get('/get-blood/type/:type', async(req, res)=>{
+  try{
+    const {type} = req.params;
+    if(!type){
+      throw new Error('type is required');
+    }
+    const dbInstance = new SqlAccess();
+    const rows = await dbInstance.querybyBloodType(type);
+    if(!rows.length){
+      throw new Error(`no records with ${type} found`);
+    }
+    res.status(HTTP['200']).json(rows);
+  }
+  catch(e){
+    res.status(HTTP['400']).send(e.message);
+  }
+});
 export default app;
