@@ -1,5 +1,5 @@
 import express, {Response, Request} from 'express';
-import { pool, mongo } from './database';
+import { pool } from './database';
 import { SqlAccess } from './dataTools/sqlAccess';
 import { CacheSql, HTTP, UpdateSql } from './types/types';
 

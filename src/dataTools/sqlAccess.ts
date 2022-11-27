@@ -120,14 +120,17 @@ export class SqlAccess extends SqlStringer{
 
     async deleteExpired(expiry: Date): Promise<void> {
         const sql =
-            `delete from bloodbankmanagementsystem_sql_user_jashon where expiry <= $1`;
+            `delete from bloodbankmanagementsystem_sql_user_jashon
+            where expiry <= $1`;
         await pool.query(sql, [expiry]);
     };
 
     async cacheRecord (request: CacheSql){
         const sql =`
-            select * from bloodbankmanagementsystem_sql_user_jashon
-            where location = $1 and blood_type = $2`;
+            select * from bloodbankmanagementsystem_sql_user_jashon where
+            location = $1 and blood_type = $2 and expiry = (select min(expiry)
+            from bloodbankmanagementsystem_sql_user_jashon where location = $1
+            and blood_type = $2)`;
         const data = await pool.query(sql, [request.location,
             request.type]);
         if(!data.rowCount){
