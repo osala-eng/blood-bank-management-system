@@ -159,7 +159,7 @@ app.post('/emergency/create', async(req, res) => {
     }
     const dbInstance = new SqlAccess();
     const reqId =  await dbInstance.cacheRecord(reqData);
-    res.status(HTTP['200']).json({_id: reqId});
+    res.status(HTTP['200']).send('Emergency is created');
   }
   catch(e){
     res.status(HTTP['400']).send(e.message);
