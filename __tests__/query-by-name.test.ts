@@ -39,7 +39,7 @@ describe('Test get query by name', () => {
     .get('/get-blood/hospital/Test')
     expect(test.statusCode).toBe(200)
     const rows = test.body as BloodRecords;
-    expect(rows.length > 1).toBe(true);
+    expect(rows.length > 0).toBe(true);
     });
 
   test('Get by name error expect 400', async () => {

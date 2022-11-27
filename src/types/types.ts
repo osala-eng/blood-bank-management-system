@@ -36,4 +36,9 @@ export interface InsertSql {
     donator: string;
 }
 
+
+export interface CacheSql {
+    location: string;
+    type: string;
+}
 export const NULL = 0;

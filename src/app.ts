@@ -1,7 +1,7 @@
 import express, {Response, Request} from 'express';
-import { pool } from './database';
+import { pool, mongo } from './database';
 import { SqlAccess } from './dataTools/sqlAccess';
-import { HTTP, UpdateSql } from './types/types';
+import { CacheSql, HTTP, UpdateSql } from './types/types';
 
 const app = express();
 app.use(express.json());
@@ -9,7 +9,7 @@ app.use((_req: Request, res: Response, next) =>{
     res.header({
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': '*' });
-      next();
+    next();
 });
 
 /**
@@ -146,6 +146,24 @@ app.post('/clean-blood', async (req, res) => {
     catch(e){
       res.status(HTTP['400']).send(e.message);
     }
+});
+
+/**
+ * Emergency create
+ */
+app.post('/emergency/create', async(req, res) => {
+  try{
+    const reqData = req.body as CacheSql;
+    if(!reqData.type || !reqData.location){
+      throw new Error('invalid request params');
+    }
+    const dbInstance = new SqlAccess();
+    const reqId =  await dbInstance.cacheRecord(reqData);
+    res.status(HTTP['200']).json({_id: reqId});
+  }
+  catch(e){
+    res.status(HTTP['400']).send(e.message);
+  }
 });
 
 export default app;

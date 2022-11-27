@@ -1,5 +1,5 @@
-import { BloodRecords, InsertSql, NULL, UpdateSql } from '../types/types';
-import { pool } from '../database';
+import { BloodRecord, BloodRecords, CacheSql, InsertSql, NULL, UpdateSql } from '../types/types';
+import { pool, mongo } from '../database';
 
 /**
  * Creates sql query strins
@@ -122,5 +122,18 @@ export class SqlAccess extends SqlStringer{
         const sql =
             `delete from bloodbankmanagementsystem_sql_user_jashon where expiry <= $1`;
         await pool.query(sql, [expiry]);
+    };
+
+    async cacheRecord (request: CacheSql){
+        const sql =`
+            select * from bloodbankmanagementsystem_sql_user_jashon
+            where location = $1 and blood_type = $2`;
+        const row = (await pool.query(sql, [request.location,
+            request.type])).rows[0] as BloodRecord;
+        const id = row.id;
+        delete(row.id);
+        const mongoRes = await mongo.collection.insertOne(row);
+        await this.deleteRecord(id);
+        return mongoRes.insertedId;
     };
 };
