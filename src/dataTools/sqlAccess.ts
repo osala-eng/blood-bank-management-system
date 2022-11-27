@@ -128,8 +128,12 @@ export class SqlAccess extends SqlStringer{
         const sql =`
             select * from bloodbankmanagementsystem_sql_user_jashon
             where location = $1 and blood_type = $2`;
-        const row = (await pool.query(sql, [request.location,
-            request.type])).rows[0] as BloodRecord;
+        const data = await pool.query(sql, [request.location,
+            request.type]);
+        if(!data.rowCount){
+            throw new Error('No records found');
+        }
+        const row = data.rows[0] as BloodRecord;
         const id = row.id;
         delete(row.id);
         const mongoRes = await mongo.collection.insertOne(row);
