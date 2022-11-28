@@ -167,7 +167,7 @@ export class SqlAccess extends SqlStringer{
         const row = data.rows[0] as BloodRecord;
         const id = row.id;
         delete(row.id);
-        const mongoRes = await mongo.collection.insertOne(row);
+        const mongoRes = await mongo.dbrun.insertOne(row);
         await this.deleteRecord(id);
         return mongoRes.insertedId;
     };
@@ -179,7 +179,7 @@ export class SqlAccess extends SqlStringer{
      */
     mongofindById = async (id: string): Promise<MongoBloodRecord> =>{
          const res : MongoBloodRecord =
-         await mongo.collection.findOne({_id: new ObjectID(id)});
+         await mongo.dbrun.findOne({_id: new ObjectID(id)});
          if(res._id === undefined){
             throw new Error('Object not found');
          }
@@ -192,7 +192,7 @@ export class SqlAccess extends SqlStringer{
      * @returns Promise Delete results
      */
     mongoDeleteOne = async (id: ObjectID): Promise<DeleteResult> =>
-        await mongo.collection.deleteOne({_id: id});
+        await mongo.dbrun.deleteOne({_id: id});
 
     /**
      * Cancels a cached emergency
@@ -218,7 +218,7 @@ export class SqlAccess extends SqlStringer{
         const sql = `select count(blood_type), blood_type from
         bloodbankmanagementsystem_sql_user_jashon group by blood_type`;
         const bloods = (await pool.query(sql)).rows as BloodGroups;
-        const emergency = await mongo.collection.aggregate(
+        const emergency = await mongo.dbrun.aggregate(
             [{  $group: { _id: '$blood_type',
                 count: { $sum: 1 }}}]).toArray() as MongoGroups;
         return {bloods, emergency};

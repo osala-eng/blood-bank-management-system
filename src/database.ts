@@ -6,8 +6,8 @@ export const pool = new Pool(config);
 
 
 class Mongo {
-    public collection: Collection;
     conected = false;
+    public dbrun: Collection;
     constructor (
         readonly client = new MongoClient(mongoConfig.uri)){
             ( async () => await this.init())();
@@ -16,7 +16,7 @@ class Mongo {
         await this.client.connect();
         this.conected = true;
         const db = this.client.db(mongoConfig.dbName);
-        this.collection = db.collection(mongoConfig.tableName);
+        this.dbrun = db.collection(mongoConfig.tableName);
     };
 
 };

@@ -26,7 +26,7 @@ beforeAll( async() => {
  afterAll( async()=>{
       server.close();
       try {
-        await mongo.collection.deleteMany({location: 'Emergency-Test'});
+        await mongo.dbrun.deleteMany({location: 'Emergency-Test'});
     }
     catch (e){
         console.log(e.message);
