@@ -58,4 +58,22 @@ export interface CacheSql {
     location: string;
     type: string;
 }
+
+export interface BloodTypes {
+    'O Positive': number;
+    'O Negative': number;
+    'A Positive': number;
+    'A Negative': number;
+    'B Positive': number;
+    'B Negative': number;
+    'AB Positive': number;
+    'AB Negative': number;
+};
+
+export interface Info {
+    total_blood: number;
+    total_emergencies: number;
+    percentage_emergencies: number;
+    blood_per_type: BloodTypes
+};
 export const NULL = 0;
