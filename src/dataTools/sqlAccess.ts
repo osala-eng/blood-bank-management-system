@@ -88,17 +88,22 @@ export class SqlAccess extends SqlStringer{
      * Insert record into the table
      * @param data table data format
      */
-    insertRecord = async (data: InsertSql): Promise<void> => {
+    insertRecord = async (data: InsertSql & UpdateSql): Promise<void> => {
         const recs: Array<string| Date | number> = [data.id];
         recs.push(data.hospital, data.blood_type, data.location, data.donator);
         const sql =
             `insert into bloodbankmanagementsystem_sql_user_jashon
             (id, hospital, blood_type, location, donator, date, expiry)
             values ($1, $2, $3, $4, $5, $6, $7)`;
-        const month = 6;
-        const [date , expiry] = [new Date(), new Date()];
-        expiry.setMonth(expiry.getMonth() + month);
-        recs.push(date, expiry);
+        try{
+            recs.push(data.date, data.expiry);
+        }
+        catch{
+            const month = 6;
+            const [date , expiry] = [new Date(), new Date()];
+            expiry.setMonth(expiry.getMonth() + month);
+            recs.push(date, expiry);
+        }
         await pool.query(sql, recs);
     };
 
@@ -197,7 +202,7 @@ export class SqlAccess extends SqlStringer{
         while((await this.recordExist(newId))){
             newId = randomInt(max);
         }
-        const sqlRec = {...row, id: newId} as InsertSql;
+        const sqlRec = {...row, id: newId} as BloodRecord;
         await this.insertRecord(sqlRec);
         await this.mongoDeleteOne(mongoId);
         return newId;
