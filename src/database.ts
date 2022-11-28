@@ -6,7 +6,7 @@ export const pool = new Pool(config);
 
 
 class Mongo {
-    public collection: Collection<Document>;
+    public collection: Collection;
     conected = false;
     constructor (
         readonly client = new MongoClient(mongoConfig.uri)){

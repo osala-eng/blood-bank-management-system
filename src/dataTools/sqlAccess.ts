@@ -1,5 +1,6 @@
-import { BloodRecord, BloodRecords, CacheSql, InsertSql, NULL, UpdateSql } from '../types/types';
+import { BloodRecord, BloodRecords, CacheSql, InsertSql, MongoBloodRecord, NULL, UpdateSql } from '../types/types';
 import { pool, mongo } from '../database';
+import { ObjectID } from 'bson';
 
 /**
  * Creates sql query strins
@@ -111,6 +112,11 @@ export class SqlAccess extends SqlStringer{
         return (await pool.query(sql, [time])).rows as BloodRecords;
     };
 
+    /**
+     * Retrieve records of a given blood type
+     * @param type blood type
+     * @returns Promise records
+     */
     querybyBloodType = async (type: string): Promise<BloodRecords> => {
         const sql =`
         select * from bloodbankmanagementsystem_sql_user_jashon
@@ -118,6 +124,10 @@ export class SqlAccess extends SqlStringer{
         return (await pool.query(sql, [type])).rows as BloodRecords;
     };
 
+    /**
+     * Delete records that have expired filtered by date
+     * @param expiry Date in ISO formart
+     */
     async deleteExpired(expiry: Date): Promise<void> {
         const sql =
             `delete from bloodbankmanagementsystem_sql_user_jashon
@@ -125,7 +135,12 @@ export class SqlAccess extends SqlStringer{
         await pool.query(sql, [expiry]);
     };
 
-    async cacheRecord (request: CacheSql){
+    /**
+     * Create a record cache to mongo db
+     * @param request request blood type and location
+     * @returns promise Object Id
+     */
+    async cacheRecord (request: CacheSql): Promise<ObjectID>{
         const sql =`
             select * from bloodbankmanagementsystem_sql_user_jashon where
             location = $1 and blood_type = $2 and expiry = (select min(expiry)
@@ -143,4 +158,19 @@ export class SqlAccess extends SqlStringer{
         await this.deleteRecord(id);
         return mongoRes.insertedId;
     };
+
+    /**
+     * Retrieve a cached emergency
+     * @param id 24 digit Object Id string
+     * @returns Promise Mongo record
+     */
+    mongofindById = async (id: string): Promise<MongoBloodRecord> =>{
+         const res : MongoBloodRecord =
+         await mongo.collection.findOne({_id: new ObjectID(id)});
+         if(res._id === undefined){
+            throw new Error('Object not found');
+         }
+        return res;
+    };
+
 };

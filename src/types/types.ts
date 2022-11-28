@@ -1,3 +1,6 @@
+import {WithId, Document} from 'mongodb';
+import { type } from 'os';
+
 export const HTTP = {
     '200' : 200,
     '201' : 201,
@@ -16,7 +19,21 @@ export interface BloodRecord {
     donator: string;
 };
 
+interface _MongoBloodRecord {
+    _id: string;
+    hospital: string;
+    date: string;
+    blood_type: string;
+    expiry: string;
+    location: string;
+    donator: string;
+};
+
 export type BloodRecords = BloodRecord[];
+
+export type MongoBloodRecord = WithId<_MongoBloodRecord | Document>;
+
+export type MongoBloodRecords = MongoBloodRecord[];
 
 export interface UpdateSql {
     id: number;

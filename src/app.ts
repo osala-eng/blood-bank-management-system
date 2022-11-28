@@ -166,4 +166,22 @@ app.post('/emergency/create', async(req, res) => {
   }
 });
 
+/**
+ * Retrieve Emergency
+ */
+app.get('/emergency/:id', async(req, res) => {
+  try{
+    const {id} = req.params;
+    if(!id){
+      throw new Error('Id must be provided');
+    }
+    const dbInstance = new SqlAccess();
+    const data = await dbInstance.mongofindById(id);
+    res.status(200).json(data);
+  }
+  catch(e){
+    res.status(400).send(e.message);
+  }
+});
+
 export default app;
