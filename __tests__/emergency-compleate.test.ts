@@ -10,10 +10,10 @@ jest.setTimeout(40000);
 beforeAll( async() => {
     const mockRec: InsertSql = {
       id: 212,
-      hospital: 'Complete-Emergency-Test',
-      blood_type: 'Complete-Emergency-Test',
-      donator: 'Complete-Emergency-Test',
-      location: 'Complete-Emergency-Test' };
+      hospital: 'Complete-EM',
+      blood_type: 'Complete-EM',
+      donator: 'Complete-EM',
+      location: 'Complete-EM' };
   try {
     const _ = await dbInstance.insertRecord(mockRec);
   }
@@ -41,8 +41,8 @@ describe('Rettrieve emergency from mongodb', () => {
 
   test('Retrieve record expect success', async() => {
     const createId = await dbInstance.cacheRecord({
-        location: 'Complete-Emergency-Test',
-        type: 'Complete-Emergency-Test' });
+        location: 'Complete-EM',
+        type: 'Complete-EM' });
 
         const res = await request(server)
             .post(`/emergency/complete`)
