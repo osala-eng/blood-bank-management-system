@@ -10,7 +10,7 @@ class Mongo {
     conected = false;
     constructor (
         readonly client = new MongoClient(mongoConfig.uri)){
-            this.init();
+            ( async () => await this.init())();
         };
     async init() {
         await this.client.connect();

@@ -2,6 +2,7 @@ import { BloodRecord, BloodRecords, CacheSql, InsertSql, MongoBloodRecord, NULL,
 import { pool, mongo } from '../database';
 import { ObjectID } from 'bson';
 import { DeleteResult } from 'mongodb';
+import { randomInt } from 'crypto';
 
 /**
  * Creates sql query strins
@@ -174,7 +175,31 @@ export class SqlAccess extends SqlStringer{
         return res;
     };
 
+    /**
+     * Delete a single record from mongo DB
+     * @param id Object Id
+     * @returns Promise Delete results
+     */
     mongoDeleteOne = async (id: ObjectID): Promise<DeleteResult> =>
         await mongo.collection.deleteOne({_id: id});
 
+    /**
+     * Cancels a cached emergency
+     * @param id 24 digit id string
+     * @returns sql number id
+     */
+    cancelEmergency = async (id: string): Promise<number> => {
+        const mongoId = new ObjectID(id);
+        const row = await this.mongofindById(id);
+        delete(row._id);
+        const max = 999999;
+        let newId = randomInt(max);
+        while((await this.recordExist(newId))){
+            newId = randomInt(max);
+        }
+        const sqlRec = {...row, id: newId} as InsertSql;
+        await this.insertRecord(sqlRec);
+        await this.mongoDeleteOne(mongoId);
+        return newId;
+    };
 };

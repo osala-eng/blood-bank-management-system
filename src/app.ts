@@ -204,4 +204,22 @@ app.post('/emergency/complete', async(req, res) => {
   }
 });
 
+/**
+ * Cancel an emergency
+ */
+app.post('/emergency/cancel', async(req, res) => {
+  try{
+    const {id} = req.body;
+    if(!id){
+      throw new Error('Id is requred');
+    }
+    const dbInstance = new SqlAccess();
+    const sqlId = await dbInstance.cancelEmergency(id);
+    res.status(200).send(`${sqlId}`);
+  }
+  catch(e){
+    res.status(400).send(e.message);
+  }
+});
+
 export default app;

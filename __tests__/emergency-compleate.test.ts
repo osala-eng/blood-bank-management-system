@@ -30,7 +30,7 @@ beforeAll( async() => {
 describe('Rettrieve emergency from mongodb', () => {
   test('Expect error 400 if record does not exist', (done) => {
         request(server)
-        .get('/emergency/complete')
+        .post('/emergency/complete')
         .send({})
         .expect(400)
         .end((err, _res) => {
