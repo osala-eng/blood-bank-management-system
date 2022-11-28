@@ -226,7 +226,7 @@ export class SqlAccess extends SqlStringer{
 export class BloodInfo implements Info{
     total_blood = 0;
     total_emergencies = 0;
-    percentage_emergencies = `0%`;
+    percentage_emergencies = 0;
     readonly blood_per_type: BloodTypes = {
         'O Positive': 0,
         'O Negative': 0,
@@ -258,10 +258,10 @@ export class BloodInfo implements Info{
         });
         if(this.total_blood !== 0){
             this.percentage_emergencies =
-            `${(this.total_emergencies * 100 / this.total_blood)}%`;
+            (this.total_emergencies * 100 / this.total_blood);
         }
         else{
-            this.percentage_emergencies = `0%`;
+            this.percentage_emergencies = 0;
         }
     };
 

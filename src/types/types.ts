@@ -82,7 +82,7 @@ export const VERIFY =
 export interface Info {
     total_blood: number;
     total_emergencies: number;
-    percentage_emergencies: string;
+    percentage_emergencies: number;
     blood_per_type: BloodTypes;
 };
 
