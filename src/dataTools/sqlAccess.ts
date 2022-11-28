@@ -1,6 +1,7 @@
 import { BloodRecord, BloodRecords, CacheSql, InsertSql, MongoBloodRecord, NULL, UpdateSql } from '../types/types';
 import { pool, mongo } from '../database';
 import { ObjectID } from 'bson';
+import { DeleteResult } from 'mongodb';
 
 /**
  * Creates sql query strins
@@ -172,5 +173,8 @@ export class SqlAccess extends SqlStringer{
          }
         return res;
     };
+
+    mongoDeleteOne = async (id: ObjectID): Promise<DeleteResult> =>
+        await mongo.collection.deleteOne({_id: id});
 
 };

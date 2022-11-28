@@ -1,3 +1,4 @@
+import { ObjectID } from 'bson';
 import express, {Response, Request} from 'express';
 import { mongo, pool } from './database';
 import { SqlAccess } from './dataTools/sqlAccess';
@@ -178,6 +179,25 @@ app.get('/emergency/:id', async(req, res) => {
     const dbInstance = new SqlAccess();
     const data = await dbInstance.mongofindById(id);
     res.status(200).json(data);
+  }
+  catch(e){
+    res.status(400).send(e.message);
+  }
+});
+
+/**
+ * Complete emergency
+ */
+
+app.post('/emergency/complete', async(req, res) => {
+  try{
+    const {id} = req.body;
+    if(!id) {
+      throw new Error('Id is required');
+    }
+    const dbInstance = new SqlAccess();
+    const data = await dbInstance.mongoDeleteOne(new ObjectID(id));
+    res.status(200).send(data);
   }
   catch(e){
     res.status(400).send(e.message);
