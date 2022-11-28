@@ -225,7 +225,7 @@ app.post('/emergency/cancel', async(req, res) => {
 /**
  * Get info
  */
-app.post('/info', async(_, res) => {
+app.get('/info', async(_, res) => {
   try{
     const dataInstance = new BloodInfo();
     await dataInstance.update();

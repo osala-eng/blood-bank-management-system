@@ -12,7 +12,7 @@ beforeAll(async() => {
 jest.setTimeout(40000);
 describe('Check if the info end point returns data', () =>{
     test('Make a post request to the info endpoint', async ()=>{
-        const res = await request(server).post('/info');
+        const res = await request(server).get('/info');
         expect(res.statusCode).toBe(200);
         expect(res.body).toBeDefined;
     })
