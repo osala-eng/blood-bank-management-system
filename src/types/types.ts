@@ -1,5 +1,4 @@
 import {WithId, Document} from 'mongodb';
-import { type } from 'os';
 
 export const HTTP = {
     '200' : 200,

@@ -258,7 +258,7 @@ export class BloodInfo implements Info{
         });
         if(this.total_blood !== 0){
             this.percentage_emergencies =
-            `${(this.total_emergencies * 100 / this.total_blood).toFixed(1)}%`;
+            `${(this.total_emergencies * 100 / this.total_blood)}%`;
         }
         else{
             this.percentage_emergencies = `0%`;
