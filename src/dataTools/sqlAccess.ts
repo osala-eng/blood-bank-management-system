@@ -1,8 +1,11 @@
-import { BloodRecord, BloodRecords, CacheSql, InsertSql, MongoBloodRecord, NULL, UpdateSql } from '../types/types';
+import { BloodGroups, BloodRecord, BloodRecords,
+     BloodTypes, CacheSql, Info, InsertSql,
+     MongoBloodRecord, NULL, UpdateSql, VERIFY }
+     from '../types/types';
 import { pool, mongo } from '../database';
 import { ObjectID } from 'bson';
 import { DeleteResult } from 'mongodb';
-import { randomInt } from 'crypto';
+import { randomInt} from 'crypto';
 
 /**
  * Creates sql query strins
@@ -208,4 +211,39 @@ export class SqlAccess extends SqlStringer{
         await this.mongoDeleteOne(mongoId);
         return newId;
     };
+
+    async getInfo () {
+        const sql = `select count(blood_type), blood_type from
+        bloodbankmanagementsystem_sql_user_jashon group by blood_type`;
+
+        const res = (await pool.query(sql)).rows as BloodGroups;
+        return res;
+    };
 };
+
+export class BloodInfo implements Info{
+    total_blood: number = 0;
+    total_emergencies: number = 0;
+    percentage_emergencies: number = 0;
+    readonly blood_per_type: BloodTypes = {
+        'A Negative': 0,
+        'A Positive': 0,
+        'AB Negative': 0,
+        'AB Positive': 0,
+        'B Negative': 0,
+        'B Positive': 0,
+        'O Negative': 0,
+        'O Positive': 0  };
+
+    async update(){
+        const dbInstance = new SqlAccess();
+        const sqlData = await dbInstance.getInfo();
+        sqlData.forEach(bloodGroup => {
+            const thisType = bloodGroup.blood_type as string;
+            if(thisType in VERIFY) console.log('Check');
+            this.blood_per_type[bloodGroup.blood_type] = bloodGroup.count;
+        });
+    };
+
+    data = () => this;
+}

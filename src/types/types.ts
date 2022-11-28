@@ -59,6 +59,12 @@ export interface CacheSql {
     type: string;
 }
 
+export type Bloods =
+    'O Positive' | 'O Negative' |
+    'A Positive' | 'A Negative' |
+    'B Positive' | 'B Negative' |
+    'AB Positive' | 'AB Negative';
+
 export interface BloodTypes {
     'O Positive': number;
     'O Negative': number;
@@ -70,10 +76,22 @@ export interface BloodTypes {
     'AB Negative': number;
 };
 
+export const VERIFY =
+['O Positive', 'O Negative' , 'A Positive', 'A Negative',
+ 'B Positive', 'B Negative', 'AB Positive', 'AB Negative'];
+
 export interface Info {
     total_blood: number;
     total_emergencies: number;
     percentage_emergencies: number;
-    blood_per_type: BloodTypes
+    blood_per_type: BloodTypes;
 };
+
+export interface BloodGroup {
+    count: number;
+    blood_type: Bloods;
+};
+
+export type BloodGroups = BloodGroup[];
+
 export const NULL = 0;

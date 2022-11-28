@@ -1,7 +1,7 @@
 import { ObjectID } from 'bson';
 import express, {Response, Request} from 'express';
 import { mongo, pool } from './database';
-import { SqlAccess } from './dataTools/sqlAccess';
+import { BloodInfo, SqlAccess } from './dataTools/sqlAccess';
 import { CacheSql, HTTP, UpdateSql } from './types/types';
 
 const app = express();
@@ -222,4 +222,18 @@ app.post('/emergency/cancel', async(req, res) => {
   }
 });
 
+/**
+ * Get info
+ */
+app.post('/info', async(_, res) => {
+  try{
+    const dataInstance = new BloodInfo();
+    await dataInstance.update();
+    const rows = dataInstance.data()
+    res.status(200).json(rows);
+  }
+  catch(e){
+    res.status(400).send(e.message);
+  }
+});
 export default app;
