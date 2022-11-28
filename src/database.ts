@@ -1,6 +1,6 @@
 import {Pool} from 'pg';
 import {config, mongoConfig} from './config/config';
-import {MongoClient, Document, Collection} from 'mongodb';
+import {MongoClient, Collection} from 'mongodb';
 
 export const pool = new Pool(config);
 

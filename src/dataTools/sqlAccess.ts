@@ -1,6 +1,6 @@
 import { BloodGroups, BloodRecord, BloodRecords,
      BloodTypes, CacheSql, Info, InsertSql,
-     MongoBloodRecord, NULL, UpdateSql, VERIFY }
+     MongoBloodRecord, MongoGroups, NULL, UpdateSql, VERIFY }
      from '../types/types';
 import { pool, mongo } from '../database';
 import { ObjectID } from 'bson';
@@ -215,35 +215,59 @@ export class SqlAccess extends SqlStringer{
     async getInfo () {
         const sql = `select count(blood_type), blood_type from
         bloodbankmanagementsystem_sql_user_jashon group by blood_type`;
-
-        const res = (await pool.query(sql)).rows as BloodGroups;
-        return res;
+        const bloods = (await pool.query(sql)).rows as BloodGroups;
+        const emergency = await mongo.collection.aggregate(
+            [{  $group: { _id: '$blood_type',
+                count: { $sum: 1 }}}]).toArray() as MongoGroups;
+        return {bloods, emergency};
     };
 };
 
 export class BloodInfo implements Info{
-    total_blood: number = 0;
-    total_emergencies: number = 0;
-    percentage_emergencies: number = 0;
+    total_blood = 0;
+    total_emergencies = 0;
+    percentage_emergencies = `0%`;
     readonly blood_per_type: BloodTypes = {
-        'A Negative': 0,
-        'A Positive': 0,
-        'AB Negative': 0,
-        'AB Positive': 0,
-        'B Negative': 0,
-        'B Positive': 0,
+        'O Positive': 0,
         'O Negative': 0,
-        'O Positive': 0  };
-
+        'A Positive': 0,
+        'A Negative': 0,
+        'B Positive': 0,
+        'B Negative': 0,
+        'AB Positive': 0,
+        'AB Negative': 0  };
+    /**
+     * Get data from mongoDB and PSQL to update emergencies
+     */
     async update(){
         const dbInstance = new SqlAccess();
-        const sqlData = await dbInstance.getInfo();
-        sqlData.forEach(bloodGroup => {
-            const thisType = bloodGroup.blood_type as string;
-            if(thisType in VERIFY) console.log('Check');
-            this.blood_per_type[bloodGroup.blood_type] = bloodGroup.count;
+        const allData = await dbInstance.getInfo();
+        allData.bloods.forEach(group => {
+            const thisType = group.blood_type as string;
+            if(VERIFY.includes(thisType)){
+                this.blood_per_type[group.blood_type] += +group.count;
+                this.total_blood += +group.count;
+            }
         });
+        allData.emergency.forEach(group => {
+            if(VERIFY.includes(group._id)){
+                this.blood_per_type[group._id] += +group.count;
+                this.total_blood += +group.count;
+                this.total_emergencies += +group.count;
+            }
+        });
+        if(this.total_blood !== 0){
+            this.percentage_emergencies =
+            `${(this.total_emergencies * 100 / this.total_blood).toFixed(1)}%`;
+        }
+        else{
+            this.percentage_emergencies = `0%`;
+        }
     };
 
+    /**
+     * returns the computed info
+     * @returns This class object implementing info structure
+     */
     data = () => this;
-}
+};
