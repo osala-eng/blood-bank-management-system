@@ -1,11 +1,13 @@
 import { BloodGroups, BloodRecord, BloodRecords,
-     BloodTypes, CacheSql, Info, InsertSql,
+     BloodTypes, CacheSql, DonateReq, Info, InsertSql,
      MongoBloodRecord, MongoGroups, NULL, UpdateSql, VERIFY }
      from '../types/types';
 import { pool, mongo } from '../database';
 import { ObjectID } from 'bson';
 import { DeleteResult } from 'mongodb';
 import { randomInt} from 'crypto';
+import { DateUrl } from '../config/config';
+import fetch from 'node-fetch';
 
 /**
  * Creates sql query strins
@@ -221,8 +223,45 @@ export class SqlAccess extends SqlStringer{
                 count: { $sum: 1 }}}]).toArray() as MongoGroups;
         return {bloods, emergency};
     };
+
+    async donateBlod (data: DonateReq) {
+        const sql =
+        `insert into bloodbankmanagementsystem_sql_user_jashon
+        (id, hospital, blood_type, location, donator, date, expiry)
+        values ($1, $2, $3, $4, $5, $6, $7)`;
+        const max = 999999;
+        let id = randomInt(max);
+        while((await this.recordExist(id))){
+            id = randomInt(max);
+        }
+        const recs: Array<string | number | Date> =
+            [id, data.hospital, data.type, data.location, data.donator];
+        const [date, expiry] = [new Date(), new Date()];
+        recs.push(date);
+        let years: number;
+        await fetch(DateUrl, {
+            method: 'POST',
+            body: JSON.stringify({
+                username: 'jashon',
+                type: data.type })})
+                .then(res => res.text())
+                .then(res => {
+                    years = +res;
+                });
+        expiry.setFullYear(expiry.getFullYear() + years);
+        recs.push(expiry);
+        await pool.query(sql, recs);
+        return id;
+    };
 };
 
+
+
+
+
+/**
+ * Get info Object
+ */
 export class BloodInfo implements Info{
     total_blood = 0;
     total_emergencies = 0;

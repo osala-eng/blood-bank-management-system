@@ -2,7 +2,7 @@ import { ObjectID } from 'bson';
 import express, {Response, Request} from 'express';
 import { pool } from './database';
 import { BloodInfo, SqlAccess } from './dataTools/sqlAccess';
-import { CacheSql, HTTP, UpdateSql } from './types/types';
+import { CacheSql, DonateReq, HTTP, UpdateSql } from './types/types';
 
 const app = express();
 app.use(express.json());
@@ -236,4 +236,22 @@ app.get('/info', async(_, res) => {
     res.status(500).send(e.message);
   }
 });
+
+/**
+ * Donate blood
+ */
+app.post('/donate', async(req, res) => {
+    try{
+      const dbInstance = new SqlAccess();
+      const data: DonateReq = req.body;
+      if(!data.donator || !data.hospital || !data.location || !data.type){
+        throw new Error('All fields must be provided');
+      }
+      const id = await dbInstance.donateBlod(data);
+      res.status(200).send(`${id}`);
+    }
+    catch(e){
+      res.status(400).send(e.message);
+    }
+})
 export default app;

@@ -99,4 +99,11 @@ export interface MongoGroup {
 export type MongoGroups = MongoGroup[];
 export type BloodGroups = BloodGroup[];
 
+export interface DonateReq {
+    hospital: string;
+    type: string;
+    location: string;
+    donator: string;
+};
+
 export const NULL = 0;
