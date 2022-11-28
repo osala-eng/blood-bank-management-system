@@ -4,14 +4,10 @@ import app from '../src/app';
 import {createServer, Server} from 'http';
 import {SqlAccess} from '../src/dataTools/sqlAccess';
 import {mongo} from '../src/database';
-import { ObjectID } from 'bson';
 
 const dbInstance = new SqlAccess();
 const server: Server = createServer(app);
-let createId: ObjectID;
-
 jest.setTimeout(40000);
-const nullFn = jest.fn();
 beforeAll( async() => {
     const mockRec: InsertSql = {
       id: 211,
@@ -21,9 +17,6 @@ beforeAll( async() => {
       location: 'Emergency-Test' };
   try {
     const _ = await dbInstance.insertRecord(mockRec);
-    createId = await dbInstance.cacheRecord({
-        location: 'Emergency-Test',
-        type: 'Emergency-Test' });
   }
   catch (e){
       console.log(e.message)
@@ -42,17 +35,6 @@ beforeAll( async() => {
 
 
 describe('Rettrieve emergency from mongodb', () => {
-  test('Retrieve record expect success', (done) => {
-        request(server)
-        .get(`/emergency/${createId}`)
-        .end((err, res)=> {
-            if (err) return done(err);
-            expect(res).toBeDefined
-            expect(res.status).toBe(200)
-            return done()
-        });
-    });
-
   test('Expect error 400 if record does not exist', (done) => {
         request(server)
         .get('/emergency/not')
@@ -61,5 +43,12 @@ describe('Rettrieve emergency from mongodb', () => {
             if(err) return done(err);
             return done();
         });
+   });
+  test('Retrieve record expect success', async() => {
+    const createId = await dbInstance.cacheRecord({
+        location: 'Emergency-Test',
+        type: 'Emergency-Test' });
+        const res = await request(server).get(`/emergency/${createId}`);
+        expect(res.status).toBe(200)
     });
 });
