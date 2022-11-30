@@ -288,7 +288,7 @@ export class SqlAccess extends SqlStringer{
                 .then(res => res) as UserInfo;
         delete(bloodRec.blood_type);
 
-        return {id: bloodRec.id, ...bloodInfo};
+        return {...bloodRec, ...bloodInfo};
     };
 };
 
