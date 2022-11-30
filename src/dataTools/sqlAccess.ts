@@ -270,7 +270,7 @@ export class SqlAccess extends SqlStringer{
     async getUserInfo(id: string) {
         const sql = `
             select * from bloodbankmanagementsystem_sql_user_jashon
-            where id >= $1`;
+            where id = $1`;
         if(!(await this.recordExist(+id))){
             throw new Error('Record not found');
         }
