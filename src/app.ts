@@ -1,8 +1,10 @@
 import { ObjectID } from 'bson';
 import express, {Response, Request} from 'express';
+import { CleanUrl } from './config/config';
 import { pool } from './database';
 import { BloodInfo, SqlAccess } from './dataTools/sqlAccess';
 import { CacheSql, DonateReq, HTTP, UpdateSql } from './types/types';
+import fetch from 'node-fetch';
 
 const app = express();
 app.use(express.json());
@@ -12,6 +14,19 @@ app.use((_req: Request, res: Response, next) =>{
       'Access-Control-Allow-Methods': '*' });
     next();
 });
+
+/**
+ * Clean database of expired blood every 5 secs
+ */
+const cleanInterval = 5000;
+
+setInterval( async () => {
+  await fetch(CleanUrl, {
+    method: 'POST',
+    body: JSON.stringify({
+        username: 'jashon',
+        expiry: new Date() })});
+}, cleanInterval);
 
 /**
  * Root

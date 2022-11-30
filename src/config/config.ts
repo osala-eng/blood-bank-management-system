@@ -14,3 +14,4 @@ export const mongoConfig = {
 
 export const DateUrl = 'https://components.skillreactor.io/BloodBankManagementSystem/jashon/system/expiry';
 export const InfoUrl = `https://components.skillreactor.io/BloodBankManagementSystem/jashon/system/person/info`;
+export const CleanUrl = ` https://components.skillreactor.io/BloodBankManagementSystem/jashon/system/clean-blood`;
