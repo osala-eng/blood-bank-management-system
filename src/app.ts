@@ -99,9 +99,6 @@ app.post('/delete-blood', async(req, res) => {
 app.get('/get-blood/time/:time', async(req, res) => {
   try {
     const {time} = req.params;
-    if (!time) {
-      throw new Error('time is required');
-    }
     const timefmt = new Date(time);
     const dbInstance = new SqlAccess();
     const rows = await dbInstance.querybyTime(timefmt);
@@ -118,9 +115,6 @@ app.get('/get-blood/time/:time', async(req, res) => {
 app.get('/get-blood/type/:type', async(req, res)=>{
   try{
     const {type} = req.params;
-    if(!type){
-      throw new Error('type is required');
-    }
     const dbInstance = new SqlAccess();
     const rows = await dbInstance.querybyBloodType(type);
     if(!rows.length){
@@ -173,9 +167,6 @@ app.post('/emergency/create', async(req, res) => {
 app.get('/emergency/:id', async(req, res) => {
   try{
     const {id} = req.params;
-    if(!id){
-      throw new Error('Id must be provided');
-    }
     const dbInstance = new SqlAccess();
     const data = await dbInstance.mongofindById(id);
     res.status(200).json(data);
@@ -232,6 +223,7 @@ app.get('/info', async(_, res) => {
     const rows = dataInstance.data();
     res.status(200).json(rows);
   }
+  /* istanbul ignore next */
   catch(e){
     res.status(500).send(e.message);
   }

@@ -28,6 +28,14 @@ describe('Donate Blood and info', () =>{
             expect(res.text).toBeDefined;
             id = +res.text;
         });
+        test('Expect new blood donation to return code 200 with sql ID', async ()=>{
+            const res = await request(server)
+            .post('/donate')
+            .send({});
+            expect(res.statusCode).toBe(400);
+            expect(res.text).toBeDefined;
+            id = +res.text;
+        });
     });
     describe('Info test', () => {
         test('Make a post request to the info endpoint', async ()=>{
