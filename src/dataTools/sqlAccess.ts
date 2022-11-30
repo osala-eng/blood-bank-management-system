@@ -267,7 +267,7 @@ export class SqlAccess extends SqlStringer{
         return id;
     };
 
-    async getUserInfo(id: string): Promise<UserInfo> {
+    async getUserInfo(id: string) {
         const sql = `
             select * from bloodbankmanagementsystem_sql_user_jashon
             where id >= $1`;
@@ -276,6 +276,7 @@ export class SqlAccess extends SqlStringer{
         }
         const bloodRec =
             (await pool.query(sql, [+id])).rows[0] as BloodRecord;
+        const type = bloodRec.blood_type;
         const bloodInfo = await fetch(InfoUrl, {
             method: 'POST',
             body: JSON.stringify({
@@ -285,8 +286,9 @@ export class SqlAccess extends SqlStringer{
                 donator: bloodRec.donator })})
                 .then(res => res.json())
                 .then(res => res) as UserInfo;
+        delete(bloodRec.blood_type);
 
-        return {...bloodRec, ...bloodInfo};
+        return {id: bloodRec.id, ...bloodInfo};
     };
 };
 
