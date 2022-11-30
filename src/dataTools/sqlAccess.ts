@@ -161,8 +161,8 @@ export class SqlAccess extends SqlStringer{
             and blood_type = $2)`;
         const data = await pool.query(sql, [request.location,
             request.type]);
-        /* istanbul ignore next */
         if(!data.rowCount){
+            /* istanbul ignore next */
             throw new Error('No records found');
         }
         const row = data.rows[0] as BloodRecord;
@@ -181,8 +181,8 @@ export class SqlAccess extends SqlStringer{
     mongofindById = async (id: string): Promise<MongoBloodRecord> =>{
          const res : MongoBloodRecord =
          await mongo.dbrun.findOne({_id: new ObjectID(id)});
-         /* istanbul ignore next */
          if(res._id === undefined){
+            /* istanbul ignore next */
             throw new Error('Object not found');
          }
         return res;
@@ -303,8 +303,8 @@ export class BloodInfo implements Info{
             this.percentage_emergencies =
             +(this.total_emergencies * 100 / this.total_blood).toFixed(1);
         }
-        /* istanbul ignore next */
         else{
+             /* istanbul ignore next */
             this.percentage_emergencies = 0;
         }
     };

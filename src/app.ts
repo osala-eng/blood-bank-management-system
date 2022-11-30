@@ -223,8 +223,8 @@ app.get('/info', async(_, res) => {
     const rows = dataInstance.data();
     res.status(200).json(rows);
   }
-  /* istanbul ignore next */
   catch(e){
+    /* istanbul ignore next */
     res.status(500).send(e.message);
   }
 });
