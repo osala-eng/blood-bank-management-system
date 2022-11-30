@@ -106,4 +106,13 @@ export interface DonateReq {
     donator: string;
 };
 
+export interface DonationInfo  {
+    birth_date: Date;
+    last_visit: Date;
+    home_city: string;
+    person_id: string;
+};
+
+export type UserInfo = BloodRecord & DonationInfo;
+
 export const NULL = 0;

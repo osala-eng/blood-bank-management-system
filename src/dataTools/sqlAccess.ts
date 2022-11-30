@@ -1,12 +1,12 @@
 import { BloodGroups, BloodRecord, BloodRecords,
      BloodTypes, CacheSql, DonateReq, Info, InsertSql,
-     MongoBloodRecord, MongoGroups, NULL, UpdateSql, VERIFY }
+     MongoBloodRecord, MongoGroups, NULL, UpdateSql, UserInfo, VERIFY }
      from '../types/types';
 import { pool, mongo } from '../database';
 import { ObjectID } from 'bson';
 import { DeleteResult } from 'mongodb';
 import { randomInt} from 'crypto';
-import { DateUrl } from '../config/config';
+import { DateUrl, InfoUrl } from '../config/config';
 import fetch from 'node-fetch';
 
 /**
@@ -217,6 +217,10 @@ export class SqlAccess extends SqlStringer{
         return newId;
     };
 
+    /**
+     * Get info on blood in stock
+     * @returns Blood info from Mongo and PSQL
+     */
     async getInfo () {
         const sql = `select count(blood_type), blood_type from
         bloodbankmanagementsystem_sql_user_jashon group by blood_type`;
@@ -227,6 +231,11 @@ export class SqlAccess extends SqlStringer{
         return {bloods, emergency};
     };
 
+    /**
+     * Create a new donation record
+     * @param data Object donation info
+     * @returns id of the newly created object
+     */
     async donateBlod (data: DonateReq) {
         const sql =
         `insert into bloodbankmanagementsystem_sql_user_jashon
@@ -256,6 +265,28 @@ export class SqlAccess extends SqlStringer{
         recs.push(expiry);
         await pool.query(sql, recs);
         return id;
+    };
+
+    async getUserInfo(id: string): Promise<UserInfo> {
+        const sql = `
+            select * from bloodbankmanagementsystem_sql_user_jashon
+            where id >= $1`;
+        if(!(await this.recordExist(+id))){
+            throw new Error('Record not found');
+        }
+        const bloodRec =
+            (await pool.query(sql, [+id])).rows[0] as BloodRecord;
+        const bloodInfo = await fetch(InfoUrl, {
+            method: 'POST',
+            body: JSON.stringify({
+                username: 'jashon',
+                type: bloodRec.blood_type,
+                hospital: bloodRec.hospital,
+                donator: bloodRec.donator })})
+                .then(res => res.json())
+                .then(res => res) as UserInfo;
+
+        return {...bloodRec, ...bloodInfo};
     };
 };
 

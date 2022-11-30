@@ -13,3 +13,4 @@ export const mongoConfig = {
     tableName: `bloodbankmanagementsystem_mongo_user_jashon` };
 
 export const DateUrl = 'https://components.skillreactor.io/BloodBankManagementSystem/jashon/system/expiry';
+export const InfoUrl = `https://components.skillreactor.io/BloodBankManagementSystem/jashon/system/person/info`;
