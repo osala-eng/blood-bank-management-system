@@ -8,12 +8,6 @@ import fetch from 'node-fetch';
 
 const app = express();
 app.use(express.json());
-app.use((_req: Request, res: Response, next) =>{
-    res.header({
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': '*' });
-    next();
-});
 
 /**
  * Clean database of expired blood every 5 secs
