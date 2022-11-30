@@ -252,7 +252,7 @@ app.get('/info/:id', async (req, res) => {
       const {id} = req.params;
       const dbInstance = new SqlAccess();
       const data = await dbInstance.getUserInfo(id);
-      res.status(200).send('data');
+      res.status(200).json(data);
     }
     catch(e){
       res.status(400).send(e.message);
