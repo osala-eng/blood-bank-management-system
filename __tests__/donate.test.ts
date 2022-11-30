@@ -34,7 +34,6 @@ describe('Donate Blood and info', () =>{
             .send({});
             expect(res.statusCode).toBe(400);
             expect(res.text).toBeDefined;
-            id = +res.text;
         });
     });
     describe('Info test', () => {
